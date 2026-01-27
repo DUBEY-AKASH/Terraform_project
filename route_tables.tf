@@ -12,7 +12,7 @@ resource "aws_route_table" "Project_IG_route_table" {
   
 }
 
-resource "aws_route_table_association" "Public access" {
+resource "aws_route_table_association" "Public_access" {
     subnet_id = aws_subnet.Public.id
     route_table_id = aws_route_table.Project_IG_route_table.id
   
