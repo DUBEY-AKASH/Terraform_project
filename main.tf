@@ -14,7 +14,7 @@ resource "aws_instance" "app" {
 
 resource "aws_instance" "db" {
 
-    ami = var.ami_id
+    ami = "ami-04233b5aecce09244"
     instance_type = "t3.micro"
     subnet_id = aws_subnet.private.id
     vpc_security_group_ids = [aws_security_group.Private_sg.id]
