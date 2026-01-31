@@ -1,10 +1,12 @@
 pipeline {
     agent any
 
+    options {
+        disableConcurrentBuilds()
+    }
+
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('aws_cred').accessKey
-        AWS_SECRET_ACCESS_KEY = credentials('aws_cred').secretKey
-        AWS_DEFAULT_REGION    = "eu-north-1"
+        AWS_DEFAULT_REGION = "eu-north-1"
     }
 
     stages {
@@ -12,14 +14,19 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    credentialsId: 'github-ssh-creds',
-                    url: 'git@github.com:DUBEY-AKASH/Terraform_project.git'
+                    credentialsId: 'github_token_classic',
+                    url: 'https://github.com/DUBEY-AKASH/Terraform_project.git'
             }
         }
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                     credentialsId: 'aws_cred']
+                ]) {
+                    sh 'terraform init'
+                }
             }
         }
 
@@ -31,14 +38,25 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan -out=tfplan'
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                     credentialsId: 'aws_cred']
+                ]) {
+                    sh 'terraform plan -out=tfplan'
+                }
             }
         }
 
         stage('Terraform Apply') {
             steps {
                 input message: 'Apply Terraform changes?'
-                sh 'terraform apply -auto-approve tfplan'
+
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                     credentialsId: 'aws_cred']
+                ]) {
+                    sh 'terraform apply tfplan'
+                }
             }
         }
     }
