@@ -33,14 +33,14 @@ resource "aws_security_group" "Private_sg" {
         from_port = 22
         to_port = 22
         protocol = "tcp"
-        security_groups = [aws_security_group.Public_sg.id]
+        security_groups = [aws_security_group.Public_sg]
     }
 
     ingress {
         from_port = 3306
         to_port = 3306
         protocol = "tcp"
-        cidr_blocks = [aws_security_group.Public_sg.id]
+        cidr_blocks = ["0.0.0.0/0"]
     }
     egress {
         from_port = 0
