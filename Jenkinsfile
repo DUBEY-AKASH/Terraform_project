@@ -11,14 +11,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main',
-                    credentialsId: 'github_token_classic',
-                    url: 'https://github.com/DUBEY-AKASH/Terraform_project.git'
-            }
-        }
-
         stage('Terraform Init') {
             steps {
                 withCredentials([
